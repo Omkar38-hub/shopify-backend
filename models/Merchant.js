@@ -31,6 +31,10 @@ const merchantSchema = mongoose.Schema({
     shopname:{
         type:String,
     },
+    shopimage:{
+        public_id: String,
+        url:String,
+    },
     description:{
         type:String,
     },
