@@ -1,10 +1,12 @@
 const User = require("../models/User")
+const Merchant = require("../models/Merchant")
+const bcrypt = require("bcrypt")
 
 exports.register = async (req,res) => {
 
     try {
 
-        const {fname, lname, email, password, phone, city, pincode, state} = req.body;
+        const {name, email, password, phone} = req.body;
 
         let user = await User.findOne({email})
 
@@ -15,14 +17,13 @@ exports.register = async (req,res) => {
             })
         }
 
+        const newPass = await bcrypt.hash(password,10)
+
         user = await User.create({
-            name: fname + " " + lname,
+            name,
             email, 
-            password,
+            password: newPass,
             phone,
-            city,
-            pincode,
-            state,
             avatar:{
                 public_id: "Public id",
                 url:"Image url"
@@ -150,4 +151,64 @@ exports.myProfile = async (req,res) => {
             message:error.message
         })
     }
+}
+
+
+//Convert base account to Business account
+exports.convertToBusiness = async (req,res) => {
+
+    try {
+
+        const user = await User.findById(req.user._id).select("+password");
+
+        if(!user){
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        let merchant = await Merchant.findOne({email: user.email})
+
+        if(merchant){
+            return res.status(400).json({
+                success: false,
+                message: "Merchant with same email already exist",
+                merchant
+            })
+        }
+
+        merchant = await Merchant.create({
+            name: user.name,
+            email: user.email, 
+            password: user.password,
+            phone: user.phone,
+            avatar:user.avatar
+        })
+
+        await merchant.save()
+        await user.remove()
+
+        //Logging in merchant As soon as registered
+        const token = await merchant.generateToken();
+        const options = {                                       // Creating cookie named "token" whose value is token
+            expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days  
+            httpOnly: true
+        }
+
+        res.status(201)                                //201 => created
+            .cookie("token", token, options)           //Option contains token expiry details
+            .json({
+            success:true,
+            merchant,
+            token
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:error.message
+        })        
+    }
+
 }

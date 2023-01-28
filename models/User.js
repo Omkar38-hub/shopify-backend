@@ -58,16 +58,16 @@ const userSchema = mongoose.Schema({
 
 
 //Before saving(for first time) or updating the schema run this function
-userSchema.pre("save", async function (next) {
+// userSchema.pre("save", async function (next) {
 
-    //But this might hash the hased password when we'll update data other than password Thus adding if condition
+//     //But this might hash the hased password when we'll update data other than password Thus adding if condition
 
-    if(this.isModified("password")){
-        this.password = await bcrypt.hash(this.password,10);
-    }
+//     if(this.isModified("password")){
+//         this.password = await bcrypt.hash(this.password,10);
+//     }
 
-    next();  // move to next statement
-})
+//     next();  // move to next statement
+// })
 
 userSchema.methods.matchPassword = async function (password) {
     return await bcrypt.compare(password, this.password);        //Boolean function 
