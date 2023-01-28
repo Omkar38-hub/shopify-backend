@@ -1,10 +1,11 @@
 const Merchant = require("../models/Merchant")
+const bcrypt = require("bcrypt")
 
 exports.register = async (req,res) => {
 
     try {
 
-        const {fname, lname, email, password, phone, city, pincode, state, shopname} = req.body;
+        const {name, email, password, phone, city, pincode, state, shopname} = req.body;
 
         let merchant = await Merchant.findOne({email})
 
@@ -15,10 +16,12 @@ exports.register = async (req,res) => {
             })
         }
 
+        const newPass = await bcrypt.hash(password,10)
+
         merchant = await Merchant.create({
-            name: fname + " " + lname,
+            name,
             email, 
-            password,
+            password: newPass,
             phone,
             city,
             pincode,
@@ -149,6 +152,41 @@ exports.myProfile = async (req,res) => {
         res.status(500).json({
             success:false,
             message:error.message
+        })
+    }
+}
+
+exports.shopDetails = async (req,res) => {
+
+    try {
+
+        let merchant = await Merchant.findById(req.merchant._id)
+
+        if(!merchant){
+            return res.status(400).json({
+                success: false,
+                message: "Merchant not found"
+            })
+        }
+
+        merchant.shopname = req.body.shopname
+        merchant.GSTIN = req.body.GSTIN
+        merchant.description = req.body.description
+        merchant.category = req.body.category
+        merchant.city = req.body.city
+        merchant.pincode = req.body.pincode
+
+        await merchant.save()
+
+        return res.status(200).json({
+            success: true,
+            merchant,
+        })
+        
+    } catch (error) {
+        return res.status(501).json({
+            success: false,
+            message: error.message
         })
     }
 }

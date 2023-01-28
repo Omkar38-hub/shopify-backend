@@ -30,7 +30,12 @@ const merchantSchema = mongoose.Schema({
 
     shopname:{
         type:String,
-        required: true
+    },
+    description:{
+        type:String,
+    },
+    category:{
+        type:String,
     },
 
     GSTIN: {
@@ -76,16 +81,16 @@ const merchantSchema = mongoose.Schema({
 
 
 //Before saving(for first time) or updating the schema run this function
-merchantSchema.pre("save", async function (next) {
+// merchantSchema.pre("save", async function (next) {
 
-    //But this might hash the hased password when we'll update data other than password Thus adding if condition
+//     //But this might hash the hased password when we'll update data other than password Thus adding if condition
 
-    if(this.isModified("password")){
-        this.password = await bcrypt.hash(this.password,10);
-    }
+//     if(this.isModified("password")){
+//         this.password = await bcrypt.hash(this.password,10);
+//     }
 
-    next();  // move to next statement
-})
+//     next();  // move to next statement
+// })
 
 merchantSchema.methods.matchPassword = async function (password) {
     return await bcrypt.compare(password, this.password);        //Boolean function 
