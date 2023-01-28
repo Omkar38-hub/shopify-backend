@@ -12,9 +12,9 @@ const productSchema = mongoose.Schema({
         url:String,
     },
 
-    merchant:{
+    shop:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Merchant"
+        ref:"Shop"
     },
 
     description: {

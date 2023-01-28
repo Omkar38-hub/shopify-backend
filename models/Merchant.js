@@ -28,27 +28,8 @@ const merchantSchema = mongoose.Schema({
         select:false
     },
 
-    shopname:{
-        type:String,
-    },
-    shopimage:{
-        public_id: String,
-        url:String,
-    },
-    description:{
-        type:String,
-    },
-    category:{
-        type:String,
-    },
-
-    GSTIN: {
-        type: String,
-        default: null,
-    },
-
     phone:{
-        type:Number,
+        type: Number,
     },
 
     state:{
@@ -61,11 +42,15 @@ const merchantSchema = mongoose.Schema({
         type:Number,
     },
 
+    shops:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Shop",
+    }],
+
     role:{
         type:String,
         default:"MERCHANT"
     },
-
 
     createdAt:{
         type:Date,
