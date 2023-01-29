@@ -16,10 +16,12 @@ app.use(cookieParser())
 //Importing router
 const user = require("./routes/user");
 const merchant = require("./routes/merchant")
+const login = require('./routes/login')
 
 
 //Using routes
 app.use("/api/v1/user",user)
 app.use("/api/v1/merchant",merchant)
+app.use("/api/v1",login)
 
 module.exports = app;
