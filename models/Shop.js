@@ -20,6 +20,10 @@ const shopSchema = mongoose.Schema({
         type: String,
         default: null,
     },
+    merchant: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Merchant",
+    },
 
     phone:{
         type:Number,
