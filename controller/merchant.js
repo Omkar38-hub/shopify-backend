@@ -1,5 +1,6 @@
 const Merchant = require("../models/Merchant")
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
+const Shop = require("../models/Shop");
 
 exports.register = async (req,res) => {
 
@@ -156,7 +157,7 @@ exports.myProfile = async (req,res) => {
     }
 }
 
-exports.shopDetails = async (req,res) => {
+exports.addShop = async (req,res) => {
 
     try {
 
@@ -169,19 +170,31 @@ exports.shopDetails = async (req,res) => {
             })
         }
 
-        merchant.shopname = req.body.shopname
-        merchant.GSTIN = req.body.GSTIN
-        merchant.description = req.body.description
-        merchant.category = req.body.category
-        merchant.city = req.body.city
-        merchant.pincode = req.body.pincode
+        const{shopname, description, category, GSTIN, state, city, pincode} = req.body
 
+        const shop = await Shop.create({
+            shopname,
+            description,
+            category,
+            GSTIN,
+            merchant: req.merchant._id,
+            state,
+            city,
+            pincode,
+            shopimage:{
+                public_id: "Public id",
+                url:"Image url"
+            },
+        })
+
+        merchant.shops.push(shop._id)
         await merchant.save()
 
         return res.status(200).json({
-            success: true,
-            merchant,
-        })
+            success:true,
+            shop,
+            message:"Shop added"
+        });
         
     } catch (error) {
         return res.status(501).json({

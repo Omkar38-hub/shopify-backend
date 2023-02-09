@@ -17,6 +17,11 @@ const productSchema = mongoose.Schema({
         ref:"Shop"
     },
 
+    merchant:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Shop"
+    },
+
     description: {
         type: String,
         required: [true, "Please Enter product Description"],

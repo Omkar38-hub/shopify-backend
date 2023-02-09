@@ -88,6 +88,48 @@ exports.login = async (req,res) => {
     }
 }
 
+//My profile data
+exports.myProfile = async (req,res) => {
+
+    try {
+
+        if(req.user){
+            const user = await User.findById(req.user._id);
+
+            if(user){
+                return res.status(200).json({
+                    success:true,
+                    user,            
+                })
+            }
+        }
+
+        if(req.merchant){
+            const merchant = await Merchant.findById(req.merchant._id);
+
+            if(merchant){
+                return res.status(200).json({
+                    success:true,
+                    merchant,
+                })
+            }
+        }
+
+        return res.status(400).json({
+            success: false,
+            message: "Invalid user or merchant"
+        })
+
+
+        
+    } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
 //user Logout
 exports.logout = async (req,res) => {
 
