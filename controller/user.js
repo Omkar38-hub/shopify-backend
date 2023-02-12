@@ -32,10 +32,21 @@ exports.register = async (req,res) => {
 
         //Logging in user As soon as registered
         const token = await user.generateToken();
-        const options = {                                       // Creating cookie named "token" whose value is token
-            expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days  
-            httpOnly: true
+        let options = {}
+        if(process.env.NODE_ENV === "Production")
+        {
+            options = {}
         }
+        else {
+            options = {                                       // Creating cookie named "token" whose value is token
+            expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days 
+            domain:"https://shopend.netlify.app", 
+            // httpOnly: true
+        }}
+        // const options = {                                       // Creating cookie named "token" whose value is token
+        //     expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days  
+        //     // httpOnly: true
+        // }
 
         res.status(201)                                //201 => created
             .cookie("token", token, options)           //Option contains token expiry details
@@ -81,10 +92,21 @@ exports.login = async (req,res) => {
         }
 
         const token = await user.generateToken();               // YOU FORGET TO ADD AWAIT
-        const options = {                                       // Creating cookie named "token" whose value is token
-            expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 9 days  
-            httpOnly: true
+        let options = {}
+        if(process.env.NODE_ENV === "Production")
+        {
+            options = {}
         }
+        else {
+            options = {                                       // Creating cookie named "token" whose value is token
+            expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days 
+            domain:"https://shopend.netlify.app", 
+            // httpOnly: true
+        }}
+        // const options = {                                       // Creating cookie named "token" whose value is token
+        //     expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 9 days  
+        //     // httpOnly: true
+        // }
 
         user.lastLogin =  Date.now();
         await user.save()
@@ -191,10 +213,21 @@ exports.convertToBusiness = async (req,res) => {
 
         //Logging in merchant As soon as registered
         const token = await merchant.generateToken();
-        const options = {                                       // Creating cookie named "token" whose value is token
-            expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days  
-            httpOnly: true
+        let options = {}
+        if(process.env.NODE_ENV === "Production")
+        {
+            options = {}
         }
+        else {
+            options = {                                       // Creating cookie named "token" whose value is token
+            expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days 
+            domain:"https://shopend.netlify.app", 
+            // httpOnly: true
+        }}
+        // const options = {                                       // Creating cookie named "token" whose value is token
+        //     expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days 
+        //     // httpOnly: true
+        // }
 
         res.status(201)                                //201 => created
             .cookie("token", token, options)           //Option contains token expiry details
