@@ -30,12 +30,13 @@ exports.login = async (req,res) => {
                     expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days 
                     domain:"shopend.netlify.app",
                     secure: true,
+                    httpOnly: true
                 }
             }
             else {
                 options = {                                       // Creating cookie named "token" whose value is token
                 expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days
-                // httpOnly: true
+                httpOnly: true
             }}
 
             // const options = {                                       // Creating cookie named "token" whose value is token
@@ -83,12 +84,13 @@ exports.login = async (req,res) => {
                     expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days 
                     domain:"shopend.netlify.app",
                     secure: true,
+                    httpOnly: true
                 }
             }
             else {
                 options = {                                       // Creating cookie named "token" whose value is token
                 expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days 
-                // httpOnly: true
+                httpOnly: true
             }}
             // const options = {                                       // Creating cookie named "token" whose value is token
             //     expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 9 days  
