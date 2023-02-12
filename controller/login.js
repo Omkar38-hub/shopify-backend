@@ -31,7 +31,7 @@ exports.login = async (req,res) => {
             else {
                 options = {                                       // Creating cookie named "token" whose value is token
                 expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days 
-                domain:"https://shopend.netlify.app", 
+                domain:"shopend.netlify.app", 
                 // httpOnly: true
             }}
 
@@ -81,7 +81,7 @@ exports.login = async (req,res) => {
             else {
                 options = {                                       // Creating cookie named "token" whose value is token
                 expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days 
-                domain:"https://shopend.netlify.app", 
+                domain:"shopend.netlify.app", 
                 // httpOnly: true
             }}
             // const options = {                                       // Creating cookie named "token" whose value is token

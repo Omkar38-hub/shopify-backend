@@ -36,7 +36,7 @@ exports.register = async (req,res) => {
         if(process.env.NODE_ENV === "Production")
         {
             options = {
-                domain:"https://shopend.netlify.app", 
+                domain:"shopend.netlify.app", 
                 expires: new Date(Date.now() + 90*24*60*60*1000),
             }
         }
@@ -99,7 +99,7 @@ exports.login = async (req,res) => {
         {
             options = {
                 expires: new Date(Date.now() + 90*24*60*60*1000),
-                domain:"https://shopend.netlify.app", 
+                domain:"shopend.netlify.app", 
             }
         }
         else {
@@ -222,7 +222,7 @@ exports.convertToBusiness = async (req,res) => {
         {
             options = {
                 expires: new Date(Date.now() + 90*24*60*60*1000),              //Expired the cookie after 90 days 
-                domain:"https://shopend.netlify.app",
+                domain:"shopend.netlify.app",
             }
         }
         else {
