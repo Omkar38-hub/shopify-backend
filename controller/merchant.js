@@ -235,3 +235,42 @@ exports.addShop = async (req,res) => {
         })
     }
 }
+
+
+exports.changePassword = async (req,res) => {  
+    try {
+        const {oldPassword,newPassword,confirmPassword} = req.body;
+        console.log(oldPassword)
+        const merchant = await Merchant.findById(req.merchant._id).select("+password");
+        
+        const isMatch = await merchant.matchPassword(oldPassword);         //function is defined below User schema
+        console.log(isMatch)
+
+        if(!isMatch){
+            return res.status(400).json({
+                success:false,
+                message:"Incorrect Current password"
+            })
+        }
+        if(confirmPassword!=newPassword){
+            res.status(500).json({
+                success:false,
+                message:"Confirm Password not matched with New password"
+            })
+        }
+        const newPass = await bcrypt.hash(newPassword,10)
+        merchant.password = newPass;
+        await merchant.save();
+        res.status(200).json({
+            success:true,
+            message:"Password successfully changed"
+        })
+
+        
+    } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
