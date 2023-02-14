@@ -157,6 +157,7 @@ exports.logout = async (req,res) => {
     }
 }
 
+
 //My profile data
 exports.myProfile = async (req,res) => {
 
@@ -257,4 +258,43 @@ exports.convertToBusiness = async (req,res) => {
         })        
     }
 
+}
+
+exports.changePassword = async (req,res) => {  
+    try {
+        const {oldPassword,newPassword,confirmPassword} = req.body;
+        console.log(oldPassword)
+        const user = await User.findById(req.user._id).select("+password");
+        // console.log("hello")
+        //console.log(user);
+        const isMatch = await user.matchPassword(oldPassword);         //function is defined below User schema
+        console.log(isMatch)
+
+        if(!isMatch){
+            return res.status(400).json({
+                success:false,
+                message:"Incorrect Current password"
+            })
+        }
+        if(confirmPassword!=newPassword){
+            res.status(500).json({
+                success:false,
+                message:"Confirm Password not matched with New password"
+            })
+        }
+        const newPass = await bcrypt.hash(newPassword,10)
+        user.password = newPass;
+        await user.save();
+        res.status(200).json({
+            success:true,
+            message:"Password successfully changed"
+        })
+
+        
+    } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
 }
