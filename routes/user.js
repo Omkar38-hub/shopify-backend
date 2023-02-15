@@ -9,7 +9,7 @@ router.route("/login").post(login)
 router.route("/logout").get(logout)
 router.route("/me").get(isAuthenticated, myProfile)
 router.route("/to/merchant").post(isAuthenticated, convertToBusiness)
-router.route("/shop/products/:shopid").get( getShopProducts)
+router.route("/shop/products/:shopid").get( getShopProducts)//mere kaam
 router.route("/password/change").put(isAuthenticated,changePassword)
 router.route("/product/:id").get(getProduct)
 

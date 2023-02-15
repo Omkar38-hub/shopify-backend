@@ -5,20 +5,15 @@ const Shop = require("../models/Shop");
 exports.addProduct = async (req,res) =>{
 
     try {
-
         const {name, description, price, category, stock } = req.body
-
         const merchant = await Merchant.findById(req.merchant._id);
-
         if(!merchant){
             return res.status(404).json({
                 success:false,
                 message:"Merchant not found"
             })
         }
-
         const shop = await Shop.findById(req.params.shopid)
-
         if(!shop){
             return res.status(404).json({
                 success:false,
