@@ -38,7 +38,9 @@ const shopSchema = mongoose.Schema({
     pincode:{
         type:Number,
     },
-
+    rating:{
+        type:Number,
+    },
     createdAt:{
         type:Date,
         default: Date.now()
