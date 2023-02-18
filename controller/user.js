@@ -263,12 +263,8 @@ exports.convertToBusiness = async (req,res) => {
 exports.changePassword = async (req,res) => {  
     try {
         const {oldPassword,newPassword,confirmPassword} = req.body;
-        console.log(oldPassword)
         const user = await User.findById(req.user._id).select("+password");
-        // console.log("hello")
-        //console.log(user);
         const isMatch = await user.matchPassword(oldPassword);         //function is defined below User schema
-        console.log(isMatch)
 
         if(!isMatch){
             return res.status(400).json({

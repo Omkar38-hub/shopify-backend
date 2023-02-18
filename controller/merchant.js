@@ -240,11 +240,9 @@ exports.addShop = async (req,res) => {
 exports.changePassword = async (req,res) => {  
     try {
         const {oldPassword,newPassword,confirmPassword} = req.body;
-        console.log(oldPassword)
         const merchant = await Merchant.findById(req.merchant._id).select("+password");
         
         const isMatch = await merchant.matchPassword(oldPassword);         //function is defined below User schema
-        console.log(isMatch)
 
         if(!isMatch){
             return res.status(400).json({
