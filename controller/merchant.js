@@ -1,6 +1,7 @@
 const Merchant = require("../models/Merchant")
 const bcrypt = require("bcrypt");
 const Shop = require("../models/Shop");
+const cloudinary = require("cloudinary")
 
 exports.register = async (req,res) => {
 
@@ -202,7 +203,11 @@ exports.addShop = async (req,res) => {
             })
         }
 
-        const{shopname, description, category, GSTIN, state, city, pincode} = req.body
+        const{shopname, description, category, GSTIN, state, city, pincode, image} = req.body
+
+        const mycloud = await cloudinary.v2.uploader.upload(image, {
+            folder:"shop"
+        })
 
         const shop = await Shop.create({
             shopname,
@@ -214,9 +219,10 @@ exports.addShop = async (req,res) => {
             city,
             pincode,
             shopimage:{
-                public_id: "Public id",
-                url:"Image url"
+                public_id:mycloud.public_id,
+                url:mycloud.secure_url
             },
+
         })
 
         merchant.shops.push(shop._id)

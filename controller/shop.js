@@ -268,3 +268,37 @@ exports.getShops = async (req, res) => {
         })
     }
 }
+
+exports.getMyShops = async (req, res) => {
+
+    try {
+
+        const merchant = await Merchant.findById(req.merchant._id)
+
+        if(!merchant){
+            return res.status(404).json({
+                success: false,
+                message: "Merchant not found"
+            })
+        }
+
+        const shop = await Shop.find({merchant:req.merchant._id})
+        if(!shop){
+            return res.status(404).json({
+                success:false,
+                message:"There is no Shops"
+            })
+        }
+        return res.status(200).json({
+            success: true,
+            shops: shop.sort((a,b)=>{ if(a.name > b.name){return 1} else return -1})
+        })
+
+        
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message:error.message
+        })
+    }
+}
