@@ -1,6 +1,6 @@
 const express = require("express")
 const { register, login, logout, myProfile, addShop,changePassword} = require("../controller/merchant")
-const { addProduct, updateProduct, deleteProduct, getProduct, getMyShops } = require("../controller/shop")
+const { addProduct, updateProduct, deleteProduct, getProduct, getMyShops, getShopDetail } = require("../controller/shop")
 const { isAuthenticated } = require("../middleware/auth")
 const router = express.Router()
 
@@ -15,4 +15,5 @@ router.route("/product/:id").put(isAuthenticated, updateProduct)
                             .get(getProduct)
 router.route("/password/change").put(isAuthenticated,changePassword)
 router.route("/myshops").get(isAuthenticated, getMyShops)
+router.route("/shop/:shopid").get(isAuthenticated,getShopDetail)
 module.exports = router

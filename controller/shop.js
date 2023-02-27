@@ -302,3 +302,38 @@ exports.getMyShops = async (req, res) => {
         })
     }
 }
+
+// get the shop details with shop_id of particular shop
+exports.getShopDetail = async (req, res) => {
+    try {
+        const merchant = await Merchant.findById(req.merchant._id)
+        if(!merchant){
+            return res.status(404).json({
+                success: false,
+                message: "Merchant not found"
+            })
+        }
+        const shop = await Shop.findById(req.params.shopid)
+
+        if(!shop){
+            return res.status(404).json({
+                success:false,
+                message:"Shop not found"
+            })
+        }
+
+        // const products = await Product.find({shop:req.params.shopid})
+
+        return res.status(200).json({
+            success: true,
+            shop
+        })
+
+        
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message:error.message
+        })
+    }
+}
