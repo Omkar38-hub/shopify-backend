@@ -1,7 +1,7 @@
 const User = require("../models/User")
 const Merchant = require("../models/Merchant")
 const bcrypt = require("bcrypt")
-
+const jwt = require('jsonwebtoken');
 // User/Merchant login
 exports.login = async (req,res) => {
 
@@ -21,8 +21,23 @@ exports.login = async (req,res) => {
                     message:"Incorrect password"
                 })
             }
+            
 
-            const token = await user.generateToken();               // YOU FORGET TO ADD AWAIT
+            //************************************* */
+            // const token = jwt.sign({
+            //     user: user
+            // }, process.env.JWT_KEY, { expiresIn: new Date(Date.now() + 90*24*60*60*1000) })
+        
+            // try {
+            //     res.cookie('userToken', token, { httpOnly: true });
+            //     res.status(200).send(user);
+            // } catch (err) {
+            //     res.status(500).send({ "error": "There was an error signing in" });
+            //     console.log(err);
+            // }
+            // ********************************************** */
+            const token = await user.generateToken(); 
+            console.log(token);              // YOU FORGET TO ADD AWAIT
             let options = {}
             if(process.env.NODE_ENV === "Production")
             {
@@ -54,6 +69,7 @@ exports.login = async (req,res) => {
                 user,                                                //from here we are fetching user._id
                 token
             })
+            
         }
 
         let merchant = await Merchant.findOne({email}).select("+password");
