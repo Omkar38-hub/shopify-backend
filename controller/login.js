@@ -36,8 +36,9 @@ exports.login = async (req,res) => {
             //     console.log(err);
             // }
             // ********************************************** */
-            const token = await user.generateToken(); 
-            console.log(token);              // YOU FORGET TO ADD AWAIT
+            const token = await user.generateToken(); // YOU FORGET TO ADD AWAIT
+            // console.log(token);              
+            // console.log('poiuytrfd');
             let options = {}
             if(process.env.NODE_ENV === "Production")
             {
