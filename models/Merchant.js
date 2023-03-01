@@ -28,7 +28,7 @@ const merchantSchema = mongoose.Schema({
         select:false
     },
 
-    phone:{
+    contact:{
         type: Number,
     },
 
@@ -41,7 +41,9 @@ const merchantSchema = mongoose.Schema({
     pincode:{
         type:Number,
     },
-
+    dob:{
+        type: Date,
+    },
     shops:[{
         type: mongoose.Schema.Types.ObjectId,
         ref:"Shop",

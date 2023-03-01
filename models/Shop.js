@@ -25,7 +25,7 @@ const shopSchema = mongoose.Schema({
         ref:"Merchant",
     },
 
-    phone:{
+    contact:{
         type:Number,
     },
 

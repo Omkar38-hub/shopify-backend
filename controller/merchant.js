@@ -278,3 +278,45 @@ exports.changePassword = async (req,res) => {
         })
     }
 }
+
+// edit profile of merchant
+exports.editProfile = async (req,res) => {  
+    try {
+        const {name,email,contact,dob,pincode} = req.body;
+        const merchant = await Merchant.findById(req.merchant._id)
+
+        if(!merchant){
+            return res.status(400).json({
+                success: false,
+                message: "Merchant not found"
+            })
+        }
+        if(name){
+        merchant.name = name;
+        }
+        if(email){
+        merchant.email = email;
+        }
+        if(dob){
+        merchant.dob = dob;
+        }
+        if(pincode){
+        merchant.pincode = pincode;
+        }
+        if(contact){
+        merchant.contact = contact;
+        }
+        await merchant.save();
+        res.status(200).json({
+            success:true,
+            message:"Profile Updated Successfully"
+        })
+
+        
+    } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}

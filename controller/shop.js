@@ -337,3 +337,58 @@ exports.getShopDetail = async (req, res) => {
         })
     }
 }
+
+// edit the shop details with shop_id of particular shop
+exports.editShopDetail = async (req, res) => {
+    try {
+        const merchant = await Merchant.findById(req.merchant._id)
+        if(!merchant){
+            return res.status(404).json({
+                success: false,
+                message: "Merchant not found"
+            })
+        }
+        const shop = await Shop.findById(req.params.shopid)
+
+        if(!shop){
+            return res.status(404).json({
+                success:false,
+                message:"Shop not found"
+            })
+        }
+
+        const {shopname, description,category,GSTIN,pincode,contact} = req.body
+
+        if(shopname){
+            shop.shopname = shopname
+        }
+        if(description){
+            shop.description = description
+        }
+        if(category){
+            shop.category = category
+        }
+        if(GSTIN){
+            shop.stock = GSTIN
+        }
+        if(pincode){
+            shop.pincode = pincode
+        }
+        if(contact){
+            shop.contact= contact
+        }
+        await shop.save()
+
+        return res.status(200).json({
+            success: true,
+            message:"Shop PDetails Updated Successfully"
+        })
+
+        
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message:error.message
+        })
+    }
+}
