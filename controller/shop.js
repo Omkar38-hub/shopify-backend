@@ -379,7 +379,7 @@ exports.editShopDetail = async (req, res) => {
             })
         }
 
-        const {shopname, description,category,GSTIN,pincode,contact} = req.body
+        const {shopname, description,category,GSTIN,pincode,contact, image} = req.body
 
         if(shopname){
             shop.shopname = shopname
@@ -399,6 +399,18 @@ exports.editShopDetail = async (req, res) => {
         if(contact){
             shop.contact= contact
         }
+        if(image){
+            await cloudinary.v2.uploader.destroy(shop.shopimage.public_id)
+            const mycloud = await cloudinary.v2.uploader.upload(image, {
+                folder:"shop"
+            })
+
+            shop.shopimage={
+                public_id:mycloud.public_id,
+                url:mycloud.secure_url
+            }
+        }
+
         await shop.save()
 
         return res.status(200).json({
