@@ -1,11 +1,12 @@
 const Merchant = require("../models/Merchant");
 const Product = require("../models/Product");
+const cloudinary = require("cloudinary")
 const Shop = require("../models/Shop");
 
 exports.addProduct = async (req,res) =>{
 
     try {
-        const {name, description, price, category, stock } = req.body
+        const {name, description, price, category, stock, image, sold } = req.body
         const merchant = await Merchant.findById(req.merchant._id);
         if(!merchant){
             return res.status(404).json({
@@ -28,16 +29,21 @@ exports.addProduct = async (req,res) =>{
             })
         }
 
+        const mycloud = await cloudinary.v2.uploader.upload(image, {
+            folder:"product"
+        })
+
         const newProductData = {
             name,
             image:{
-                public_id:"mycloud.public_id",
-                url:"mycloud.secure_url"
+                public_id:mycloud.public_id,
+                url:mycloud.secure_url
             },
             shop: req.params.shopid,
             description,
             merchant: req.merchant._id,
             price,
+            sold,
             category,
             stock,
         }
@@ -125,7 +131,7 @@ exports.updateProduct = async (req, res) => {
             })
         }
 
-        const {name, description, price, category, stock } = req.body
+        const {name, description, price, category, stock, sold,  image } = req.body
 
         if(name){
             product.name = name
@@ -141,6 +147,22 @@ exports.updateProduct = async (req, res) => {
         }
         if(stock){
             product.stock = stock
+        }
+        if(sold){
+            console.log(sold)
+            product.sold = Number(sold)
+        }
+
+        if(image){
+            await cloudinary.v2.uploader.destroy(product.image.public_id)
+            const mycloud = await cloudinary.v2.uploader.upload(image, {
+                folder:"product"
+            })
+
+            product.image={
+                public_id:mycloud.public_id,
+                url:mycloud.secure_url
+            }
         }
 
         await product.save()
@@ -357,7 +379,7 @@ exports.editShopDetail = async (req, res) => {
             })
         }
 
-        const {shopname, description,category,GSTIN,pincode,contact} = req.body
+        const {shopname, description,category,GSTIN,pincode,contact, image} = req.body
 
         if(shopname){
             shop.shopname = shopname
@@ -377,11 +399,23 @@ exports.editShopDetail = async (req, res) => {
         if(contact){
             shop.contact= contact
         }
+        if(image){
+            await cloudinary.v2.uploader.destroy(shop.shopimage.public_id)
+            const mycloud = await cloudinary.v2.uploader.upload(image, {
+                folder:"shop"
+            })
+
+            shop.shopimage={
+                public_id:mycloud.public_id,
+                url:mycloud.secure_url
+            }
+        }
+
         await shop.save()
 
         return res.status(200).json({
             success: true,
-            message:"Shop PDetails Updated Successfully"
+            message:"Shop details Updated"
         })
 
         
