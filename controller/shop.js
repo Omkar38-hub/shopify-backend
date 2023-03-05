@@ -1,11 +1,12 @@
 const Merchant = require("../models/Merchant");
 const Product = require("../models/Product");
+const cloudinary = require("cloudinary")
 const Shop = require("../models/Shop");
 
 exports.addProduct = async (req,res) =>{
 
     try {
-        const {name, description, price, category, stock } = req.body
+        const {name, description, price, category, stock, image, sold } = req.body
         const merchant = await Merchant.findById(req.merchant._id);
         if(!merchant){
             return res.status(404).json({
@@ -28,16 +29,21 @@ exports.addProduct = async (req,res) =>{
             })
         }
 
+        const mycloud = await cloudinary.v2.uploader.upload(image, {
+            folder:"product"
+        })
+
         const newProductData = {
             name,
             image:{
-                public_id:"mycloud.public_id",
-                url:"mycloud.secure_url"
+                public_id:mycloud.public_id,
+                url:mycloud.secure_url
             },
             shop: req.params.shopid,
             description,
             merchant: req.merchant._id,
             price,
+            sold,
             category,
             stock,
         }
