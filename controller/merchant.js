@@ -282,7 +282,7 @@ exports.changePassword = async (req,res) => {
 // edit profile of merchant
 exports.editProfile = async (req,res) => {  
     try {
-        const {name,email,contact,dob,pincode} = req.body;
+        const {name,email,contact,dob,pincode, image} = req.body;
         const merchant = await Merchant.findById(req.merchant._id)
 
         if(!merchant){
@@ -305,6 +305,17 @@ exports.editProfile = async (req,res) => {
         }
         if(contact){
         merchant.contact = contact;
+        }
+        if(image){
+            await cloudinary.v2.uploader.destroy(merchant.avatar.public_id)
+            const mycloud = await cloudinary.v2.uploader.upload(image, {
+                folder:"merchant"
+            })
+
+            merchant.avatar={
+                public_id:mycloud.public_id,
+                url:mycloud.secure_url
+            }
         }
         await merchant.save();
         res.status(200).json({

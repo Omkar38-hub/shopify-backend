@@ -403,7 +403,7 @@ exports.editShopDetail = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message:"Shop PDetails Updated Successfully"
+            message:"Shop details Updated"
         })
 
         
