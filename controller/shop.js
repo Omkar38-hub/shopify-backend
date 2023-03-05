@@ -131,7 +131,7 @@ exports.updateProduct = async (req, res) => {
             })
         }
 
-        const {name, description, price, category, stock } = req.body
+        const {name, description, price, category, stock, sold,  image } = req.body
 
         if(name){
             product.name = name
@@ -147,6 +147,22 @@ exports.updateProduct = async (req, res) => {
         }
         if(stock){
             product.stock = stock
+        }
+        if(sold){
+            console.log(sold)
+            product.sold = Number(sold)
+        }
+
+        if(image){
+            await cloudinary.v2.uploader.destroy(product.image.public_id)
+            const mycloud = await cloudinary.v2.uploader.upload(image, {
+                folder:"product"
+            })
+
+            product.image={
+                public_id:mycloud.public_id,
+                url:mycloud.secure_url
+            }
         }
 
         await product.save()
