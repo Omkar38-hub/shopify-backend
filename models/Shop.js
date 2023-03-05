@@ -41,6 +41,14 @@ const shopSchema = mongoose.Schema({
     rating:{
         type:Number,
     },
+    location:{
+        latitude:{
+            type:String,
+        },
+        longitude:{
+            type:String
+        },
+    },
     createdAt:{
         type:Date,
         default: Date.now()
