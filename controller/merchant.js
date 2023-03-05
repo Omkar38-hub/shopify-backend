@@ -203,7 +203,7 @@ exports.addShop = async (req,res) => {
             })
         }
 
-        const{shopname, description, category, GSTIN, state, city, pincode, image} = req.body
+        const{shopname, description, category, GSTIN, state, city, pincode, image, latitude, longitude} = req.body
 
         const mycloud = await cloudinary.v2.uploader.upload(image, {
             folder:"shop"
@@ -222,6 +222,10 @@ exports.addShop = async (req,res) => {
                 public_id:mycloud.public_id,
                 url:mycloud.secure_url
             },
+            location:{
+                latitude: latitude,
+                longitude:longitude
+            }
 
         })
 
