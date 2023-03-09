@@ -2,42 +2,42 @@ const Merchant = require("../models/Merchant");
 const Product = require("../models/Product");
 const cloudinary = require("cloudinary")
 const Shop = require("../models/Shop");
-
-exports.addProduct = async (req,res) =>{
+const Math = require('math');
+exports.addProduct = async (req, res) => {
 
     try {
-        const {name, description, price, category, stock, image, sold } = req.body
+        const { name, description, price, category, stock, image, sold } = req.body
         const merchant = await Merchant.findById(req.merchant._id);
-        if(!merchant){
+        if (!merchant) {
             return res.status(404).json({
-                success:false,
-                message:"Merchant not found"
+                success: false,
+                message: "Merchant not found"
             })
         }
         const shop = await Shop.findById(req.params.shopid)
-        if(!shop){
+        if (!shop) {
             return res.status(404).json({
-                success:false,
-                message:"Shop not found"
+                success: false,
+                message: "Shop not found"
             })
         }
 
-        if(shop.merchant.toString()  != req.merchant._id.toString() ){
+        if (shop.merchant.toString() != req.merchant._id.toString()) {
             return res.status(404).json({
-                success:false,
-                message:"This shop does not belongs to you"
+                success: false,
+                message: "This shop does not belongs to you"
             })
         }
 
         const mycloud = await cloudinary.v2.uploader.upload(image, {
-            folder:"product"
+            folder: "product"
         })
 
         const newProductData = {
             name,
-            image:{
-                public_id:mycloud.public_id,
-                url:mycloud.secure_url
+            image: {
+                public_id: mycloud.public_id,
+                url: mycloud.secure_url
             },
             shop: req.params.shopid,
             description,
@@ -51,15 +51,15 @@ exports.addProduct = async (req,res) =>{
         const product = await Product.create(newProductData);
 
         res.status(201).json({
-            success:true,
+            success: true,
             product,
-            message:"Product added"
+            message: "Product added"
         });
-        
+
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -70,25 +70,25 @@ exports.getShopProducts = async (req, res) => {
         //Shop k product koi bhi access kr skta hai
         const shop = await Shop.findById(req.params.shopid)
 
-        if(!shop){
+        if (!shop) {
             return res.status(404).json({
-                success:false,
-                message:"Shop not found"
+                success: false,
+                message: "Shop not found"
             })
         }
 
-        const products = await Product.find({shop:req.params.shopid})
+        const products = await Product.find({ shop: req.params.shopid })
 
         return res.status(200).json({
             success: true,
-            products: products.sort((a,b)=>{ if(a.name > b.name){return 1} else return -1})
+            products: products.sort((a, b) => { if (a.name > b.name) { return 1 } else return -1 })
         })
 
-        
+
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -99,7 +99,7 @@ exports.updateProduct = async (req, res) => {
 
         const merchant = await Merchant.findById(req.merchant._id);
 
-        if(!merchant){
+        if (!merchant) {
             return res.status(404).json({
                 success: false,
                 message: "Merchant not found"
@@ -108,69 +108,69 @@ exports.updateProduct = async (req, res) => {
 
         const product = await Product.findById(req.params.id)
 
-        if(!product){
+        if (!product) {
             return res.status(404).json({
                 success: false,
                 message: "Product not found"
             })
         }
 
-        if(product.merchant.toString() !== req.merchant._id.toString()){
+        if (product.merchant.toString() !== req.merchant._id.toString()) {
             return res.status(404).json({
                 success: false,
-                message:"Product does not belongs to you"
+                message: "Product does not belongs to you"
             })
         }
 
         const shop = await Shop.findById(product.shop)
 
-        if(!shop){
+        if (!shop) {
             return res.status(404).json({
                 success: false,
-                message:"Shop not found"
+                message: "Shop not found"
             })
         }
 
-        const {name, description, price, category, stock, sold,  image } = req.body
+        const { name, description, price, category, stock, sold, image } = req.body
 
-        if(name){
+        if (name) {
             product.name = name
         }
-        if(description){
+        if (description) {
             product.description = description
         }
-        if(price){
+        if (price) {
             product.price = price
         }
-        if(category){
+        if (category) {
             product.category = category
         }
-        if(stock){
+        if (stock) {
             product.stock = stock
         }
-        if(sold){
+        if (sold) {
             console.log(sold)
             product.sold = Number(sold)
         }
 
-        if(image){
+        if (image) {
             await cloudinary.v2.uploader.destroy(product.image.public_id)
             const mycloud = await cloudinary.v2.uploader.upload(image, {
-                folder:"product"
+                folder: "product"
             })
 
-            product.image={
-                public_id:mycloud.public_id,
-                url:mycloud.secure_url
+            product.image = {
+                public_id: mycloud.public_id,
+                url: mycloud.secure_url
             }
         }
 
         await product.save()
 
         res.status(200).json({
-            success:true,
-            message:"Product details updated"
-        })        
+            success: true,
+            message: "Product details updated"
+        })
     } catch (error) {
         return res.status(500).json({
             success: false,
@@ -185,7 +185,7 @@ exports.deleteProduct = async (req, res) => {
 
         const merchant = await Merchant.findById(req.merchant._id);
 
-        if(!merchant){
+        if (!merchant) {
             return res.status(404).json({
                 success: false,
                 message: "Merchant not found"
@@ -194,35 +194,35 @@ exports.deleteProduct = async (req, res) => {
 
         const product = await Product.findById(req.params.id)
 
-        if(!product){
+        if (!product) {
             return res.status(404).json({
                 success: false,
                 message: "Product not found"
             })
         }
 
-        if(product.merchant.toString() !== req.merchant._id.toString()){
+        if (product.merchant.toString() !== req.merchant._id.toString()) {
             return res.status(404).json({
                 success: false,
-                message:"Product does not belongs to you"
+                message: "Product does not belongs to you"
             })
         }
 
         const shop = await Shop.findById(product.shop)
 
-        if(!shop){
+        if (!shop) {
             return res.status(404).json({
                 success: false,
-                message:"Shop not found"
+                message: "Shop not found"
             })
         }
 
         await product.remove()
 
         res.status(200).json({
-            success:true,
-            message:"Product deleted"
-        })        
+            success: true,
+            message: "Product deleted"
+        })
     } catch (error) {
         return res.status(500).json({
             success: false,
@@ -238,7 +238,7 @@ exports.getProduct = async (req, res) => {
 
         const product = await Product.findById(req.params.id)
 
-        if(!product){
+        if (!product) {
             return res.status(404).json({
                 success: false,
                 message: "Product not found"
@@ -247,18 +247,18 @@ exports.getProduct = async (req, res) => {
 
         const shop = await Shop.findById(product.shop)
 
-        if(!shop){
+        if (!shop) {
             return res.status(404).json({
                 success: false,
-                message:"Shop not found"
+                message: "Shop not found"
             })
         }
 
         res.status(200).json({
-            success:true,
+            success: true,
             product
         })
-            
+
     } catch (error) {
         return res.status(500).json({
             success: false,
@@ -271,22 +271,22 @@ exports.getShops = async (req, res) => {
 
     try {
         const shop = await Shop.find()
-        if(!shop){
+        if (!shop) {
             return res.status(404).json({
-                success:false,
-                message:"There is no Shops"
+                success: false,
+                message: "There is no Shops"
             })
         }
         return res.status(200).json({
             success: true,
-            shops: shop.sort((a,b)=>{ if(a.name > b.name){return 1} else return -1})
+            shops: shop.sort((a, b) => { if (a.shopname > b.shopname) { return 1 } else return -1 })
         })
 
-        
+
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -297,30 +297,30 @@ exports.getMyShops = async (req, res) => {
 
         const merchant = await Merchant.findById(req.merchant._id)
 
-        if(!merchant){
+        if (!merchant) {
             return res.status(404).json({
                 success: false,
                 message: "Merchant not found"
             })
         }
 
-        const shop = await Shop.find({merchant:req.merchant._id})
-        if(!shop){
+        const shop = await Shop.find({ merchant: req.merchant._id })
+        if (!shop) {
             return res.status(404).json({
-                success:false,
-                message:"There is no Shops"
+                success: false,
+                message: "There is no Shops"
             })
         }
         return res.status(200).json({
             success: true,
-            shops: shop.sort((a,b)=>{ if(a.name > b.name){return 1} else return -1})
+            shops: shop.sort((a, b) => { if (a.name > b.name) { return 1 } else return -1 })
         })
 
-        
+
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -329,7 +329,7 @@ exports.getMyShops = async (req, res) => {
 exports.getShopDetail = async (req, res) => {
     try {
         const merchant = await Merchant.findById(req.merchant._id)
-        if(!merchant){
+        if (!merchant) {
             return res.status(404).json({
                 success: false,
                 message: "Merchant not found"
@@ -337,10 +337,10 @@ exports.getShopDetail = async (req, res) => {
         }
         const shop = await Shop.findById(req.params.shopid)
 
-        if(!shop){
+        if (!shop) {
             return res.status(404).json({
-                success:false,
-                message:"Shop not found"
+                success: false,
+                message: "Shop not found"
             })
         }
 
@@ -351,11 +351,11 @@ exports.getShopDetail = async (req, res) => {
             shop
         })
 
-        
+
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -364,7 +364,7 @@ exports.getShopDetail = async (req, res) => {
 exports.editShopDetail = async (req, res) => {
     try {
         const merchant = await Merchant.findById(req.merchant._id)
-        if(!merchant){
+        if (!merchant) {
             return res.status(404).json({
                 success: false,
                 message: "Merchant not found"
@@ -372,42 +372,42 @@ exports.editShopDetail = async (req, res) => {
         }
         const shop = await Shop.findById(req.params.shopid)
 
-        if(!shop){
+        if (!shop) {
             return res.status(404).json({
-                success:false,
-                message:"Shop not found"
+                success: false,
+                message: "Shop not found"
             })
         }
 
-        const {shopname, description,category,GSTIN,pincode,contact, image} = req.body
+        const { shopname, description, category, GSTIN, pincode, contact, image } = req.body
 
-        if(shopname){
+        if (shopname) {
             shop.shopname = shopname
         }
-        if(description){
+        if (description) {
             shop.description = description
         }
-        if(category){
+        if (category) {
             shop.category = category
         }
-        if(GSTIN){
+        if (GSTIN) {
             shop.stock = GSTIN
         }
-        if(pincode){
+        if (pincode) {
             shop.pincode = pincode
         }
-        if(contact){
-            shop.contact= contact
+        if (contact) {
+            shop.contact = contact
         }
-        if(image){
+        if (image) {
             await cloudinary.v2.uploader.destroy(shop.shopimage.public_id)
             const mycloud = await cloudinary.v2.uploader.upload(image, {
-                folder:"shop"
+                folder: "shop"
             })
 
-            shop.shopimage={
-                public_id:mycloud.public_id,
-                url:mycloud.secure_url
+            shop.shopimage = {
+                public_id: mycloud.public_id,
+                url: mycloud.secure_url
             }
         }
 
@@ -415,14 +415,74 @@ exports.editShopDetail = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message:"Shop details Updated"
+            message: "Shop details Updated"
         })
 
-        
+
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message:error.message
+            message: error.message
+        })
+    }
+}
+
+// get all shops based on latitude and longitude
+exports.getLocalShops = async (req, res) => {
+
+    try {
+        var{ location } = req.body;
+        var lat1=location.latitude
+        var lon1=location.longitude
+        const shop = await Shop.find()
+        const localStore=[]
+        if (!shop) {
+            return res.status(404).json({
+                success: false,
+                message: "There is no Shops"
+            })
+        }
+        for(var i=0;i<shop.length;i++)
+        {
+            var lat2 = shop[i].location.latitude;
+           var lon2 = shop[i].location.longitude;
+        //    console.log(lat1);
+        //    console.log(lon1);
+            if(lat2!=null && lon2!=null){
+                var a, c, distance, dlat, dlon, radius;
+                radius = 6371;
+               //console.log(lat1);
+                lt1=lat1 * (Math.PI / 180)
+                lg1=lon1 * (Math.PI / 180)
+                lt2=lat2 * (Math.PI / 180)
+                lg2=lon2 * (Math.PI / 180);
+                //console.log("After" +lt1);
+                dlat = Math.abs(lt2 - lt1);
+                dlon = Math.abs(lg2 - lg1);
+                a =Math.sin(dlat / 2) * Math.sin(dlat / 2) +Math.cos((lat1)) * Math.cos((lat2)) *Math.sin(dlon / 2) * Math.sin(dlon / 2);
+                c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                distance = radius * c;
+                console.log(distance);
+                if(distance<=1.2)
+                  localStore.push(shop[i])
+            }
+        }
+        return res.status(200).json({
+            success: true,
+            shops: localStore.sort((a, b) => {
+                if (a.shopname > b.shopname) {
+                    return 1
+                }
+                else return -1
+            }
+            )
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
         })
     }
 }
