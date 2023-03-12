@@ -430,10 +430,11 @@ exports.editShopDetail = async (req, res) => {
 // get all shops based on latitude and longitude
 exports.getLocalShops = async (req, res) => {
 
+    
     try {
-        var{ location } = req.body;
-        var lat1=location.latitude
-        var lon1=location.longitude
+        var lat1= req.url.split('?')[1].split('&')[0].split('=')[1];
+        var lon1= req.url.split('?')[1].split('&')[1].split('=')[1];
+        //console.log(lat1, lon1, "latlon")
         const shop = await Shop.find()
         const localStore=[]
         if (!shop) {
@@ -462,7 +463,7 @@ exports.getLocalShops = async (req, res) => {
                 a =Math.sin(dlat / 2) * Math.sin(dlat / 2) +Math.cos((lat1)) * Math.cos((lat2)) *Math.sin(dlon / 2) * Math.sin(dlon / 2);
                 c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                 distance = radius * c;
-                console.log(distance);
+                //console.log(distance);
                 if(distance<=1.2)
                   localStore.push(shop[i])
             }
