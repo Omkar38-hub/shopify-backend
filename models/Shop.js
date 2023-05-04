@@ -40,6 +40,11 @@ const shopSchema = mongoose.Schema({
     },
     rating:{
         type:Number,
+        default: 0
+    },
+    numOfReviews: {
+        type: Number,
+        default: 0
     },
     location:{
         latitude:{

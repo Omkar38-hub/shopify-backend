@@ -1,5 +1,7 @@
 const User = require("../models/User")
 const Merchant = require("../models/Merchant")
+const Shop = require("../models/Shop")
+const Review = require("../models/Review")
 const bcrypt = require("bcrypt")
 
 exports.register = async (req,res) => {
@@ -294,3 +296,55 @@ exports.changePassword = async (req,res) => {
         })
     }
 }
+exports.shopReview = async (req,res) => {
+
+    try {
+
+        const user = await User.findById(req.user._id);
+        console.log(req.user._id)
+        const {rating,review,date} = req.body;
+        if(!user){
+            return res.status(404).json({
+                success:false,
+                message:"User not found"
+            })
+        }
+
+        const shop = await Shop.findById(req.params.shopid)
+        
+        if (!shop) {
+            return res.status(404).json({
+                success: false,
+                message: "Shop not found"
+            })
+        }
+        
+        shop.rating=((shop.rating*shop.numOfReviews)+rating)/(shop.numOfReviews+1)
+        shop.numOfReviews=shop.numOfReviews+1
+        console.log(req.params.shopid)
+        await shop.save()
+        const newReview = {
+            shop: req.params.shopid,
+            user: req.user._id,
+            rating,
+            review,
+            date
+        }
+
+        const shopreview = await Review.create(newReview);
+        res.status(201).json({
+            success: true,
+            shopreview,
+            message: "Shop Review Added"
+        });
+        
+    } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:error.message
+        })        
+    }
+
+}
+
+
