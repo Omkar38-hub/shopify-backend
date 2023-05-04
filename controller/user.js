@@ -301,7 +301,6 @@ exports.shopReview = async (req,res) => {
     try {
 
         const user = await User.findById(req.user._id);
-        console.log(req.user._id)
         const {rating,review,date} = req.body;
         if(!user){
             return res.status(404).json({
@@ -321,7 +320,6 @@ exports.shopReview = async (req,res) => {
         
         shop.rating=((shop.rating*shop.numOfReviews)+rating)/(shop.numOfReviews+1)
         shop.numOfReviews=shop.numOfReviews+1
-        console.log(req.params.shopid)
         await shop.save()
         const newReview = {
             shop: req.params.shopid,
