@@ -296,7 +296,7 @@ exports.changePassword = async (req,res) => {
         })
     }
 }
-exports.shopReview = async (req,res) => {
+exports.ReviewToShop = async (req,res) => {
 
     try {
 
@@ -343,6 +343,37 @@ exports.shopReview = async (req,res) => {
         })        
     }
 
+}
+
+
+
+exports.getshopReview = async (req, res) => {
+
+    try {
+        //Shop k review koi bhi access kr skta hai
+        const shop = await Shop.findById(req.params.shopid)
+
+        if (!shop) {
+            return res.status(404).json({
+                success: false,
+                message: "Shop not found"
+            })
+        }
+
+        const reviews = await Review.find({ shop: req.params.shopid })
+
+        return res.status(200).json({
+            success: true,
+            products: reviews.sort((a, b) => { if (a.date > b.date) { return 1 } else return -1 })
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
 }
 
 
