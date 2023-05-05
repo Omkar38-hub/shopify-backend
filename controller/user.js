@@ -5,9 +5,6 @@ const Review = require("../models/Review")
 const Cart = require("../models/Cart")
 const Product= require("../models/Product")
 const bcrypt = require("bcrypt")
-const mongoose = require('mongoose');
-const { log } = require("math")
-
 
 exports.register = async (req,res) => {
 
@@ -369,7 +366,7 @@ exports.getshopReview = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            products: reviews.sort((a, b) => { if (a.date > b.date) { return 1 } else return -1 })
+            reviews: reviews.sort((a, b) => { if (a.date > b.date) { return 1 } else return -1 })
         })
 
 
@@ -459,4 +456,32 @@ exports.addToCart = async (req,res) => {
         })        
     }
 
+}
+
+
+exports.getCartItem = async (req, res) => {
+
+    try {
+        const user = await User.findById(req.user._id);
+        if(!user){
+            return res.status(404).json({
+                success:false,
+                message:"User not found"
+            })
+        }
+
+        const cart = await Cart.findOne({user:req.user._id});
+
+        return res.status(200).json({
+            success: true,
+            cart: cart
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
 }
