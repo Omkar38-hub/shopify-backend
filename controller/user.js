@@ -2,7 +2,12 @@ const User = require("../models/User")
 const Merchant = require("../models/Merchant")
 const Shop = require("../models/Shop")
 const Review = require("../models/Review")
+const Cart = require("../models/Cart")
+const Product= require("../models/Product")
 const bcrypt = require("bcrypt")
+const mongoose = require('mongoose');
+const { log } = require("math")
+
 
 exports.register = async (req,res) => {
 
@@ -376,4 +381,82 @@ exports.getshopReview = async (req, res) => {
     }
 }
 
+exports.addToCart = async (req,res) => {
 
+    try {
+
+        const user = await User.findById(req.user._id);
+        if(!user){
+            return res.status(404).json({
+                success:false,
+                message:"User not found"
+            })
+        }
+        const { productId,quantity}  = req.body;
+        const product= await Product.findById(productId)
+        
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found"
+            })
+        }
+        const cart = await Cart.findOne({user:req.user._id});
+        if(cart)
+        {
+            let existingCartItemIndex = -1;
+            for (let i = 0; i < cart.products.length; i++) {
+                if (cart.products[i].product.toString() === productId) {
+                    existingCartItemIndex = i;
+                    break;
+                }
+            }
+
+
+            if (existingCartItemIndex >= 0) {
+                cart.totalPrice-=cart.products[existingCartItemIndex].quantity*cart.products[existingCartItemIndex].price;// back to previous state of price
+                cart.products[existingCartItemIndex].quantity=quantity;
+                cart.totalPrice+=quantity*cart.products[existingCartItemIndex].price; 
+            }
+            else{
+                cart.products.push({ 
+                    product: productId,
+                    quantity:quantity,
+                    price:product.price,
+                 });
+                 cart.totalPrice=cart.totalPrice+(product.price*quantity)
+            } 
+            await cart.save()
+            return res.status(200).json({
+                success: true,
+                cart,
+                message: 'Product added to cart' 
+            });
+        }
+        else {
+            const newCart = new Cart({
+                products: [{
+                    product : productId,
+                    quantity:quantity,
+                    price:product.price,
+                }
+                ],
+                user: req.user._id,
+                totalPrice: product.price*quantity,
+              });
+              const cart1 = await Cart.create(newCart);
+              return res.status(200).json({
+                success: true,
+                cart1,
+                message: 'Product added to cart' 
+            });
+        }
+        
+        } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:error.message
+        })        
+    }
+
+}

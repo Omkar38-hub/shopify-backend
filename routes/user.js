@@ -1,6 +1,6 @@
 const express=require("express");
 const { getShopProducts,getProduct,getShops, getLocalShops} = require("../controller/shop");
-const { register, login, logout, myProfile, convertToBusiness,changePassword,getshopReview,ReviewToShop} = require("../controller/user");
+const { register, login, logout, myProfile, convertToBusiness,changePassword,getshopReview,ReviewToShop, addToCart} = require("../controller/user");
 const { isAuthenticated } = require("../middleware/auth");
 const router = express.Router()
 
@@ -16,4 +16,5 @@ router.route("/password/change").put(isAuthenticated,changePassword)
 router.route("/product/:id").get(getProduct)
 router.route("/review-shop/:shopid").post(isAuthenticated,ReviewToShop)
                                     .get(getshopReview)
+router.route("/add-to-cart").post(isAuthenticated,addToCart)
 module.exports = router;
