@@ -411,9 +411,22 @@ exports.addToCart = async (req,res) => {
 
 
             if (existingCartItemIndex >= 0) {
-                cart.totalPrice-=cart.products[existingCartItemIndex].quantity*cart.products[existingCartItemIndex].price;// back to previous state of price
-                cart.products[existingCartItemIndex].quantity=quantity;
-                cart.totalPrice+=quantity*cart.products[existingCartItemIndex].price; 
+
+                if(quantity==0){
+                    cart.totalPrice-=cart.products[existingCartItemIndex].quantity*cart.products[existingCartItemIndex].price;
+                    cart.products.splice(existingCartItemIndex, 1);
+                    await cart.save()
+                    return res.status(200).json({
+                        success: true,
+                        cart,
+                        message: 'Product removed from cart' 
+                    });
+                }
+                else{
+                    cart.totalPrice-=cart.products[existingCartItemIndex].quantity*cart.products[existingCartItemIndex].price;// back to previous state of price
+                    cart.products[existingCartItemIndex].quantity=quantity;
+                    cart.totalPrice+=quantity*cart.products[existingCartItemIndex].price; 
+                }
             }
             else{
                 cart.products.push({ 
@@ -482,6 +495,44 @@ exports.getCartItem = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: error.message
+        })
+    }
+}
+
+
+exports.updateDelivery = async (req,res) => {  
+    try {
+        const user = await User.findById(req.user._id);
+        if(!user){
+            return res.status(404).json({
+                success:false,
+                message:"User not found"
+            })
+        }
+
+        const {address,contact,pincode}  = req.body;
+        const cart = await Cart.findOne({user:req.user._id});
+
+        if (address) {
+            cart.address = address
+        }
+        if (contact) {
+            cart.contact = contact
+        }
+        if (pincode) {
+            cart.pincode= pincode
+        }
+        await cart.save();
+        res.status(200).json({
+            success:true,
+            message:"Details Updates"
+        })
+
+        
+    } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:error.message
         })
     }
 }

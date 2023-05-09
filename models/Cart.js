@@ -26,7 +26,15 @@ const CartSchema = mongoose.Schema({
   },
   //totalProducts: Number,
   totalPrice: Number,
-
+  contact:{
+    type: Number,
+  },
+  address:{
+      type:String,
+  },
+  pincode:{
+      type:Number,
+  },
   createdAt:{
     type:Date,
     default:Date.now()
