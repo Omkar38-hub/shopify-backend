@@ -9,7 +9,14 @@ const CartSchema = mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Product"
       },
-      quantity: Number
+      quantity:{ 
+        type: Number, 
+        required: true, 
+        default: 1 
+      },
+      price: {
+        type: Number,
+      },
       
     }    
   ],
@@ -17,9 +24,17 @@ const CartSchema = mongoose.Schema({
     type:mongoose.Schema.Types.ObjectId,
     ref:"User"
   },
-  TotalProducts: Number,
+  //totalProducts: Number,
   totalPrice: Number,
-
+  contact:{
+    type: Number,
+  },
+  address:{
+      type:String,
+  },
+  pincode:{
+      type:Number,
+  },
   createdAt:{
     type:Date,
     default:Date.now()
