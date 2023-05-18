@@ -149,7 +149,6 @@ exports.updateProduct = async (req, res) => {
             product.stock = stock
         }
         if (sold) {
-            console.log(sold)
             product.sold = Number(sold)
         }
 
