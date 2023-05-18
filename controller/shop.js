@@ -434,6 +434,10 @@ exports.getLocalShops = async (req, res) => {
     try {
         var lat1= req.url.split('?')[1].split('&')[0].split('=')[1];
         var lon1= req.url.split('?')[1].split('&')[1].split('=')[1];
+        var dist= req.url.split('?')[1].split('&')[2].split('=')[1];
+        let finalDist = -1
+        if(dist)
+            finalDist = dist
         //console.log(lat1, lon1, "latlon")
         const shop = await Shop.find()
         const localStore=[]
@@ -443,6 +447,18 @@ exports.getLocalShops = async (req, res) => {
                 message: "There is no Shops"
             })
         }
+        if (finalDist==-1) {
+            return res.status(200).json({
+                success: true,
+                shops: shop.sort((a, b) => {
+                    if (a.shopname > b.shopname) {
+                        return 1
+                    }
+                    else return -1
+                })
+            })
+        }
+        // const {dist} = req.body
         for(var i=0;i<shop.length;i++)
         {
             var lat2 = shop[i].location.latitude;
@@ -464,7 +480,7 @@ exports.getLocalShops = async (req, res) => {
                 c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                 distance = radius * c;
                 //console.log(distance);
-                if(distance<=1.2)
+                if(distance<=finalDist)
                   localStore.push(shop[i])
             }
         }
