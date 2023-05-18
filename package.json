@@ -17,6 +17,7 @@
     "bcrypt": "^5.1.0",
     "cloudinary": "^1.33.0",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -24,6 +25,7 @@
     "jsonwebtoken": "^8.5.1",
     "math": "^0.0.3",
     "mongoose": "^6.7.3",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "stripe": "^12.5.0"
   }
 }
